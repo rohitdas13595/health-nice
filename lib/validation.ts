@@ -1,3 +1,4 @@
+import { GenderTypes } from "@/constants";
 import { z } from "zod";
 
 export const signUpFormSchema = z.object({
@@ -26,7 +27,7 @@ export const PatientFormValidation = z.object({
     .string()
     .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
   birthDate: z.coerce.date(),
-  gender: z.enum(["Male", "Female", "Other"]),
+  gender: z.enum([GenderTypes.Male, GenderTypes.Female, GenderTypes.Other]),
   address: z
     .string()
     .min(5, "Address must be at least 5 characters")

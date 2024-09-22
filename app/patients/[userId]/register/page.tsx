@@ -1,39 +1,40 @@
 import { RegisterForm } from "@/components/forms/RegisterForm";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import Image from "next/image";
 import Link from "next/link";
 
+export default function Register() {
+  return (
+    <div className="flex  h-screen max-h-screen w-full">
+      <section className="remove-scrollbar container my-auto">
+        <div className="sub-container max-w-[496px]">
+          <Image
+            src="/assets/icons/logo-full.svg"
+            alt="patient"
+            width={1000}
+            height={1000}
+            className="mb-12 h-10 w-fit"
+          />
+          <RegisterForm />
+          <div className="text-14-regular mt-20 flex justify-between">
+            <p className="justify-items-end text-dark-600  xl:text-left">
+              &copy; 2024 Health Nice
+            </p>
 
-
-export  default function Register() {
-    return (
-        <div className="flex  h-screen max-h-screen w-full">
-        <section className="remove-scrollbar container my-auto">
-          <div className="sub-container max-w-[496px]">
-            <Image
-              src="/assets/icons/logo-full.svg"
-              alt="patient"
-              width={1000}
-              height={1000}
-              className="mb-12 h-10 w-fit"
-            />
-            <RegisterForm />
-            <div className="text-14-regular mt-20 flex justify-between">
-              <p className="justify-items-end text-dark-600  xl:text-left">
-                &copy; 2024 Health Nice
-              </p>
-              <Link href={"/?admin=true"} className="text-green-500">
-                Admin
-              </Link>
-            </div>
+            
+            <Link href={"/?admin=true"} className="text-green-500">
+              Admin
+            </Link>
           </div>
-        </section>
-        <Image
-          src="/assets/images/register-img.png"
-          height={1000}
-          width={1000}
-          alt="patient"
-          className="side-img max-w-[390px]"
-        />
-      </div>
-    )
+        </div>
+      </section>
+      <Image
+        src="/assets/images/register-img.png"
+        height={1000}
+        width={1000}
+        alt="patient"
+        className="side-img max-w-[390px]"
+      />
+    </div>
+  );
 }

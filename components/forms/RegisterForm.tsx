@@ -9,27 +9,46 @@ import { Form } from "@/components/ui/form";
 import { CustomFromField } from "./CustomFromField";
 import { SubmitButton } from "./SubmitButton";
 import { Phone } from "lucide-react";
-import { signUpFormSchema } from "@/lib/validation";
+import { PatientFormValidation } from "@/lib/validation";
 import { useRouter } from "next/navigation";
 import { createUser } from "@/lib/actions/patient.actions";
 import { FormFieldType } from "./PatientForm";
-import { Doctors, GenderTypes, IdentificationTypes } from "@/constants";
+import { Doctors, GenderTypes, IdentificationTypes, PatientFormDefaultValues } from "@/constants";
 import Image from "next/image";
 
 export function RegisterForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const form = useForm<z.infer<typeof signUpFormSchema>>({
-    resolver: zodResolver(signUpFormSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-    },
+  const form = useForm<z.infer<typeof PatientFormValidation>>({
+    resolver: zodResolver(PatientFormValidation),
+    defaultValues:{
+        name: "",
+        email: "",
+        phone: "",
+        birthDate: new Date(Date.now()),
+        gender: GenderTypes.Male,
+        address: "",
+        occupation: "",
+        emergencyContactName: "",
+        emergencyContactNumber: "",
+        primaryPhysician: "",
+        insuranceProvider: "",
+        insurancePolicyNumber: "",
+        allergies: "",
+        currentMedication: "",
+        familyMedicalHistory: "",
+        pastMedicalHistory: "",
+        identificationType: "aadharCard",
+        identificationNumber: "",
+        identificationDocument: [],
+        treatmentConsent: false,
+        disclosureConsent: false,
+        privacyConsent: false,
+    }
   });
 
   const onSubmit = useCallback(
-    async (values: z.infer<typeof signUpFormSchema>) => {
+    async (values: z.infer<typeof PatientFormValidation>) => {
       console.log("values", values);
       // setIsLoading(true);
 
@@ -250,6 +269,32 @@ export function RegisterForm() {
             name="identificationDocument"
             label="Upload Scanned Copy of Identification Document"
             placeholder="Upload Scanned Copy of Identification Document"
+          />
+        </section>
+
+        <section className="flex flex-col gap-2">
+          <h2 className="font-bold text-lg">Consent and Privacy</h2>
+
+          <CustomFromField
+            control={form.control}
+            fieldType={FormFieldType.CHECKBOX}
+            name="treatmentConsent"
+            label="I consent to receive treatment for my health condition."
+            placeholder="Select Identification type"
+          />
+          <CustomFromField
+            control={form.control}
+            fieldType={FormFieldType.CHECKBOX}
+            name="disclosureConsent"
+            label="I consent to the use and disclosure of my health information for treatment purposes."
+            placeholder="Select Identification type"
+          />
+          <CustomFromField
+            control={form.control}
+            fieldType={FormFieldType.CHECKBOX}
+            name="privacyConsent"
+            label="I acknowledge that I have reviewed and agree to the privacy policy."
+            placeholder="Select Identification type"
           />
         </section>
 

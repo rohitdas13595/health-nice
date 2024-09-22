@@ -1,3 +1,4 @@
+import AdminOtpModal from "@/components/forms/AdminOtp";
 import { PatientForm } from "@/components/forms/PatientForm";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -21,9 +22,8 @@ export default function Home() {
             <p className="justify-items-end text-dark-600  xl:text-left">
               &copy; 2024 Health Nice
             </p>
-            <Link href={"/?admin=true"} className="text-green-500">
-              Admin
-            </Link>
+            <AdminOtpModal />
+
           </div>
         </div>
       </section>

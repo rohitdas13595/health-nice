@@ -1,12 +1,15 @@
 export const GenderOptions = ["Male", "Female", "Other"];
-
+export enum GenderTypes {
+  Male = "male",
+  Female = "female",
+  Other = "others",
+}
 export const PatientFormDefaultValues = {
-  firstName: "",
-  lastName: "",
+  name: "",
   email: "",
   phone: "",
   birthDate: new Date(Date.now()),
-  gender: "Male" as Gender,
+  gender: GenderTypes.Male,
   address: "",
   occupation: "",
   emergencyContactName: "",
@@ -18,7 +21,7 @@ export const PatientFormDefaultValues = {
   currentMedication: "",
   familyMedicalHistory: "",
   pastMedicalHistory: "",
-  identificationType: "Birth Certificate",
+  identificationType: "aadharCard",
   identificationNumber: "",
   identificationDocument: [],
   treatmentConsent: false,
@@ -26,42 +29,28 @@ export const PatientFormDefaultValues = {
   privacyConsent: false,
 };
 
-
-
-
-export enum GenderTypes{
-  Male = "male",
-  Female = "female",
-  Other = "others",
-}
-
-
 export const IdentificationTypes = [
-    {
-      label: "Aadhar Card",
-      value: "aadharCard",
-    },
-    {
-      label: "Voter Id",
-      value: "voterId",
-    },
-    {
-      label: "Driving License",
-      value: "drivingLicense",
-    },
-    {
-      label: "Ration Card",
-      value: "rationCard",
-    },
-    {
-      label: "Passport",
-      value: "passport",
-    },
-  ]
-
-
-
-
+  {
+    label: "Aadhar Card",
+    value: "aadharCard",
+  },
+  {
+    label: "Voter Id",
+    value: "voterId",
+  },
+  {
+    label: "Driving License",
+    value: "drivingLicense",
+  },
+  {
+    label: "Ration Card",
+    value: "rationCard",
+  },
+  {
+    label: "Passport",
+    value: "passport",
+  },
+];
 
 export const Doctors = [
   {

@@ -28,6 +28,7 @@ import {
   SelectLabel,
   SelectItem,
 } from "../ui/select";
+import { Checkbox } from "../ui/checkbox";
 
 interface CustomProps {
   control: Control<any, any> | undefined;
@@ -92,6 +93,21 @@ export function CustomFromField(props: CustomProps) {
         );
       }
 
+      case FormFieldType.CHECKBOX: {
+        return (
+          <div className="flex rounded-md ">
+            <FormControl>
+              <Checkbox
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                className={`data-[state=checked]:bg-green-500 data-[state=checked]:text-white`}
+              />
+            </FormControl>
+            <FormLabel className="ml-2 text-xs">{label}</FormLabel>
+          </div>
+        );
+      }
+
       case FormFieldType.TEXTAREA: {
         return (
           <div className="flex rounded-md  border  border-dark-500  bg-dark-400">
@@ -151,14 +167,16 @@ export function CustomFromField(props: CustomProps) {
                       />
                     </svg>
                     <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                      <span className="font-semibold text-green-500">Click to upload</span> or drag
-                      and drop
+                      <span className="font-semibold text-green-500">
+                        Click to upload
+                      </span>{" "}
+                      or drag and drop
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       SVG, PNG, JPG or GIF (MAX. 800x400px)
                     </p>
                   </div>
-                  <input id="dropzone-file" type="file" className="hidden"  />
+                  <input id="dropzone-file" type="file" className="hidden" />
                 </label>
               </div>
             </FormControl>
@@ -249,14 +267,21 @@ export function CustomFromField(props: CustomProps) {
               >
                 {options?.map(
                   (
-                    { label, value }: { label: string| React.ReactNode; value: string },
+                    {
+                      label,
+                      value,
+                    }: { label: string | React.ReactNode; value: string },
                     index: number
                   ) => (
                     <div className="flex items-center space-x-2 py-1">
                       <RadioGroupItem
                         value={value}
                         id={`radio-${index}-${field.name}`}
-                        className={`border-2 font-bold ${ (field?.value ?? defaultValue) == value  ? "border-green-500 text-green-500" : ""}`}
+                        className={`border-2 font-bold ${
+                          (field?.value ?? defaultValue) == value
+                            ? "border-green-500 text-green-500"
+                            : ""
+                        }`}
                       />
                       <Label htmlFor={`radio-${index}-${field.name}`}>
                         {label}
@@ -320,6 +345,7 @@ export function CustomFromField(props: CustomProps) {
           <RenderInput field={field} props={props} />
           <FormDescription>{hint}</FormDescription>
           <FormMessage className="shad-error" />
+          
         </FormItem>
       )}
     />
