@@ -9,8 +9,10 @@ import { Form } from "@/components/ui/form";
 import { CustomFromField } from "./CustomFromField";
 import { SubmitButton } from "./SubmitButton";
 import { Phone } from "lucide-react";
-import { signUpFormSchama } from "@/lib/validation";
-export enum FormFeildType {
+import { signUpFormSchema } from "@/lib/validation";
+import { useRouter } from "next/navigation";
+import { createUser } from "@/lib/actions/patient.actions";
+export enum FormFieldType {
   INPUT = "input",
   CHECKBOX = "checkbox",
   TEXTAREA = "textarea",
@@ -18,14 +20,17 @@ export enum FormFeildType {
   DATE_PICKER = "datePicker",
   SELECT = "select",
   SKELETON = "skeleton",
+  RADIO="radio",
+  FILE_INPUT="fileInput"
 }
 
 
 
 export function PatientForm() {
+  const router = useRouter();
   const [isLoading, setIsLoading] =useState(false);
-  const form = useForm<z.infer<typeof signUpFormSchama>>({
-    resolver: zodResolver(signUpFormSchama),
+  const form = useForm<z.infer<typeof signUpFormSchema>>({
+    resolver: zodResolver(signUpFormSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -33,8 +38,26 @@ export function PatientForm() {
     },
   });
 
-  const onSubmit = useCallback((values: z.infer<typeof signUpFormSchama>) => {
-    console.log("Values  from  the  use  login  form", values);
+  const onSubmit = useCallback(async (values: z.infer<typeof signUpFormSchema>) => {
+   
+
+    // setIsLoading(true);
+
+    try {
+      const  result  =  await createUser({
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+      });
+      if(result){
+        console.log("result", result);
+        router.push(`/patients/${result.$id}/register`);
+      }
+
+    } catch (error) {
+      console.error("error", error);
+    }
+
   }, []);
 
   return (
@@ -42,11 +65,11 @@ export function PatientForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <section className="mb-12 space-y-4">
           <h1 className="header">Hi there 👋</h1>
-          <p className="tesxt-dark-700">Scedule your first appointment</p>
+          <p className="tesxt-dark-700">Schedule your first appointment</p>
         </section>
         <CustomFromField
           control={form.control}
-          fieldType={FormFeildType.INPUT}
+          fieldType={FormFieldType.INPUT}
           name="name"
           label="Name"
           placeholder="Enter your name"
@@ -56,7 +79,7 @@ export function PatientForm() {
         />
         <CustomFromField
           control={form.control}
-          fieldType={FormFeildType.INPUT}
+          fieldType={FormFieldType.INPUT}
           name="email"
           label="Email"
           placeholder="Enter your email"
@@ -66,7 +89,7 @@ export function PatientForm() {
         />
         <CustomFromField
           control={form.control}
-          fieldType={FormFeildType.PHONE_INPUT}
+          fieldType={FormFieldType.PHONE_INPUT}
           name="phone"
           label="Phone"
           placeholder="Enter your phone"
