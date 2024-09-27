@@ -11,60 +11,93 @@ import { SubmitButton } from "./SubmitButton";
 import { Phone } from "lucide-react";
 import { PatientFormValidation } from "@/lib/validation";
 import { useRouter } from "next/navigation";
-import { createUser } from "@/lib/actions/patient.actions";
-import { FormFieldType } from "./PatientForm";
-import { Doctors, GenderTypes, IdentificationTypes, PatientFormDefaultValues } from "@/constants";
+import { registerPatient } from "@/lib/actions/patient.actions";
+import { FormFieldType } from "./CustomFromField";
+import {
+  Doctors,
+  GenderTypes,
+  IdentificationTypes,
+  PatientFormDefaultValues,
+} from "@/constants";
 import Image from "next/image";
 
-export function RegisterForm() {
+export function PatientDataForm({ userId, user }: { userId: string; user: any }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+
+  if (!user) {
+    return null;
+  }
   const form = useForm<z.infer<typeof PatientFormValidation>>({
     resolver: zodResolver(PatientFormValidation),
-    defaultValues:{
-        name: "",
-        email: "",
-        phone: "",
-        birthDate: new Date(Date.now()),
-        gender: GenderTypes.Male,
-        address: "",
-        occupation: "",
-        emergencyContactName: "",
-        emergencyContactNumber: "",
-        primaryPhysician: "",
-        insuranceProvider: "",
-        insurancePolicyNumber: "",
-        allergies: "",
-        currentMedication: "",
-        familyMedicalHistory: "",
-        pastMedicalHistory: "",
-        identificationType: "aadharCard",
-        identificationNumber: "",
-        identificationDocument: [],
-        treatmentConsent: false,
-        disclosureConsent: false,
-        privacyConsent: false,
-    }
+    defaultValues: {
+      name: user?.name ?? "",
+      email: user?.email,
+      phone: user?.phone ?? "",
+      birthDate: new Date(Date.now()),
+      gender: GenderTypes.Male,
+      address: "",
+      occupation: "",
+      emergencyContactName: "",
+      emergencyContactNumber: "",
+      primaryPhysician: "",
+      insuranceProvider: "",
+      insurancePolicyNumber: "",
+      allergies: "",
+      currentMedication: "",
+      familyMedicalHistory: "",
+      pastMedicalHistory: "",
+      identificationType: "aadharCard",
+      identificationNumber: "",
+      identificationDocument: [],
+      treatmentConsent: false,
+      disclosureConsent: false, 
+      privacyConsent: false,
+    },
   });
 
   const onSubmit = useCallback(
     async (values: z.infer<typeof PatientFormValidation>) => {
-      console.log("values", values);
-      // setIsLoading(true);
+      setIsLoading(true);
 
-      //   try {
-      //     const result = await createUser({
-      //       name: values.name,
-      //       email: values.email,
-      //       phone: values.phone,
-      //     });
-      //     if (result) {
-      //       console.log("result", result);
-      //       router.push(`/patients/${result.$id}/register`);
-      //     }
-      //   } catch (error) {
-      //     console.error("error", error);
-      //   }
+      try {
+        
+        
+
+        const result = await registerPatient({
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
+          birthDate: values.birthDate,
+          gender: values.gender,
+          address: values.address,
+          occupation: values.occupation,
+          emergencyContactName: values.emergencyContactName,
+          emergencyContactNumber: values.emergencyContactNumber,
+          primaryPhysician: values.primaryPhysician,
+          insuranceProvider: values.insuranceProvider,
+          insurancePolicyNumber: values.insurancePolicyNumber,
+          allergies: values.allergies,
+          currentMedication: values.currentMedication,
+          familyMedicalHistory: values.familyMedicalHistory,
+          pastMedicalHistory: values.pastMedicalHistory,
+          identificationType: values.identificationType,
+          identificationNumber: values.identificationNumber,
+         
+          privacyConsent: values.privacyConsent,
+          userId: userId,
+          identificationDocument: '',
+        });
+        console.log("values 1", result);
+        if (result) {
+          console.log("result", result);
+          // router.push(`/patients/${result.$id}/register`);
+        }
+      } catch (error) {
+        console.error("error", error);
+      }
+
+      setIsLoading(false);
     },
     []
   );

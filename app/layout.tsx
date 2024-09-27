@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 // import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 
 // const geistSans = localFont({
@@ -41,13 +42,10 @@ export default function RootLayout({
           plusJakartaSans.className
         )}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          
-        >
+        <ThemeProvider attribute="class" defaultTheme="dark">
           {children}
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );

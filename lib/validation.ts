@@ -2,20 +2,31 @@ import { GenderTypes } from "@/constants";
 import { z } from "zod";
 
 export const signUpFormSchema = z.object({
-  name: z.string().min(3, {
-    message: "Username must be at least 3 characters",
-  }).max(50, {
-    message: "Username must be atmost 50 characters",
-  }),
+  name: z
+    .string()
+    .min(3, {
+      message: "Username must be at least 3 characters",
+    })
+    .max(50, {
+      message: "Username must be atmost 50 characters",
+    }),
   email: z.string().email({
     message: "Invalid email address",
   }),
-  phone: z.string().refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
-})
+  phone: z
+    .string()
+    .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
+});
 
+export const loginFormSchema = z.object({
+  phone: z
+    .string()
+    .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
+});
 
-
-
+export const otpFormSchema = z.object({
+  otp: z.string().min(6, "Invalid OTP"),
+});
 
 export const PatientFormValidation = z.object({
   name: z
@@ -122,6 +133,3 @@ export function getAppointmentSchema(type: string) {
       return ScheduleAppointmentSchema;
   }
 }
-
-
-

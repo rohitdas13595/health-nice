@@ -1,11 +1,9 @@
 import AdminOtpModal from "@/components/forms/AdminOtp";
 import { PatientForm } from "@/components/forms/PatientForm";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import Image from "next/image";
-import Link from "next/link";
 
-export default function Home() {
+
+export default async function Home() {
   return (
     <div className="flex  h-screen max-h-screen w-full">
       <section className="remove-scrollbar container my-auto">
