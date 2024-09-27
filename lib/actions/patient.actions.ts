@@ -5,8 +5,9 @@ import { Day } from "react-day-picker";
 
 import { db } from "../db/connection";
 import { Patient, PatientData, PatientSession } from "../db/schema";
-import { eq, ilike, or } from "drizzle-orm";
+import { eq, ilike, or, sql } from "drizzle-orm";
 import dayjs from "dayjs";
+import { bigint } from "drizzle-orm/mysql-core";
 
 export const createUser = async (
   user: CreateUserParams
@@ -74,14 +75,22 @@ export const createpatientSession = async (patientId: string) => {
       .where(eq(PatientSession.patientId, patientId));
     const newIdeleExpires = dayjs().add(30, "day").toDate().getTime();
     const newActiveExpires = dayjs().add(30, "minute").toDate().getTime();
+
     if (exists.length > 0 && exists[0]) {
-      const result = await db
-        .update(PatientSession)
-        .set({ activeExpires: newActiveExpires, idleExpires: newIdeleExpires })
-        .where(eq(PatientSession.patientId, patientId))
-        .returning();
-      if (result.length > 0 && result[0]) {
-        return result[0];
+      const query = sql`UPDATE health_nice.patient_session SET active_expires = ${newActiveExpires}, idle_expires = ${newIdeleExpires} WHERE patient_id = ${patientId}`;
+
+      const result = await db.execute(query);
+
+      if (!result.rowCount || result.rowCount === 0) {
+        return null;
+      }
+
+      const session = await db
+        .select()
+        .from(PatientSession)
+        .where(eq(PatientSession.patientId, patientId));
+      if (session.length > 0 && session[0]) {
+        return session[0];
       }
       return null;
     } else {
@@ -137,7 +146,7 @@ export const getSession = async (patientId: string) => {
       } else {
         const update = await db
           .update(PatientSession)
-          .set({ activeExpires: Date.now() })
+          .set({ activeExpires: dayjs().add(30, "minute").toDate().getTime() })
           .where(eq(PatientSession.patientId, patientId))
           .returning();
         if (update.length > 0 && update[0]) {
@@ -152,8 +161,7 @@ export const getSession = async (patientId: string) => {
   return null;
 };
 
-
-export  const  getPatientData = async (patientId: string) => {
+export const getPatientData = async (patientId: string) => {
   const patientData = await db
     .select()
     .from(PatientData)
