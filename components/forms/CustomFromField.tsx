@@ -24,7 +24,6 @@ import {
   SelectValue,
   SelectContent,
   SelectGroup,
-  SelectLabel,
   SelectItem,
 } from "../ui/select";
 import { Checkbox } from "../ui/checkbox";

@@ -4,11 +4,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useCallback, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { CustomFromField } from "./CustomFromField";
 import { SubmitButton } from "./SubmitButton";
-import { Phone } from "lucide-react";
 import { PatientFormValidation } from "@/lib/validation";
 import { useRouter } from "next/navigation";
 import { registerPatient } from "@/lib/actions/patient.actions";
@@ -17,7 +15,6 @@ import {
   Doctors,
   GenderTypes,
   IdentificationTypes,
-  PatientFormDefaultValues,
 } from "@/constants";
 import Image from "next/image";
 
@@ -25,9 +22,7 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  if (!user) {
-    return null;
-  }
+  
   const form = useForm<z.infer<typeof PatientFormValidation>>({
     resolver: zodResolver(PatientFormValidation),
     defaultValues: {
@@ -101,6 +96,11 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
     },
     []
   );
+
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <Form {...form}>

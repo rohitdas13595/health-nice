@@ -1,9 +1,4 @@
 import { PatientDataForm } from "@/components/forms/PatientDataForm";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { getUser } from "@/lib/actions/patient.actions";
 import Image from "next/image";
 import Link from "next/link";
