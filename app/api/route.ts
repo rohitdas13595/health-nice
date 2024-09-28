@@ -1,4 +1,4 @@
-// import { runMigrations } from "@/lib/db/migrate";
+import { runMigrations } from "@/lib/db/migrate";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
         return new Response("Invalid secret", { status: 401 });
     }
    
-//   const data =  await runMigrations();
+  const data =  await runMigrations();
    
     return Response.json({ hello: "world" });
   }

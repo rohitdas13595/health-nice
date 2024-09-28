@@ -3,6 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CardDataType, DataCard } from "@/components/card/Datacard";
 import { PatientAppointments } from "@/components/tables/patient/PatientAppointments";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Patients } from "@/components/tables/patient/Patients";
+import { Provider } from "@/components/contexts/queryClient";
 
 const DataCards: CardDataType[] = [
   {
@@ -47,7 +49,7 @@ export default function Page() {
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <span className="text-2xl">Rohit</span>
+          <span className="text-2xl">Admin</span>
         </div>
       </div>
       <div className="flex flex-col  w-full p-4 m-2 ">
@@ -71,12 +73,24 @@ export default function Page() {
         <Tabs defaultValue="appointments" className="w-full my-8">
           <TabsList>
             <TabsTrigger value="appointments">Appointments</TabsTrigger>
-            <TabsTrigger value="profile">Profiles</TabsTrigger>
+            <TabsTrigger value="patient">Users</TabsTrigger>
+            <TabsTrigger value="patient_profile">Profiles</TabsTrigger>
+            <TabsTrigger value="doctor">Doctor</TabsTrigger>
           </TabsList>
           <TabsContent value="appointments">
-            <PatientAppointments />
+            <Provider>
+              <PatientAppointments />
+            </Provider>
           </TabsContent>
-          <TabsContent value="profile">Change your password here.</TabsContent>
+          <TabsContent value="patient">
+            <Provider>
+              <Patients />
+            </Provider>
+          </TabsContent>
+          <TabsContent value="patient_profile">
+            Change your password here.
+          </TabsContent>
+          <TabsContent value="doctor">Change your password here.</TabsContent>
         </Tabs>
       </div>
     </div>

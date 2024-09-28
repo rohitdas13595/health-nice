@@ -1,0 +1,1 @@
+ALTER TABLE "health_nice"."appointments" ADD COLUMN "updated_at" timestamp;

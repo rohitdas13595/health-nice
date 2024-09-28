@@ -12,6 +12,11 @@ export  class Settings {
     postgresHost: string;
     postgresPort: number;
     caCertificate: string;
+    redisHost: string;
+    redisPort: number;
+    redisPassword: string;
+    redisUsername: string;
+    resendApiKey: string;
 
    constructor(){
 
@@ -21,6 +26,13 @@ export  class Settings {
        this.postgresHost = this.getValue("POSTGRES_HOST", "localhost");
        this.postgresPort = Number(this.getValue("POSTGRES_PORT", "5432"));
        this.caCertificate = this.getValue("CA_CERTIFICATE", "");
+
+       this.redisHost = this.getValue("REDIS_HOST", "localhost");
+       this.redisPort = Number(this.getValue("REDIS_PORT", "6379"));
+       this.redisPassword = this.getValue("REDIS_PASSWORD", "");
+       this.redisUsername = this.getValue("REDIS_USERNAME", "");
+
+       this.resendApiKey = this.getValue("RESEND_API_KEY", "");
    }
 
 

@@ -8,6 +8,27 @@
       "when": 1727379094151,
       "tag": "0000_slippery_speed_demon",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1727525936049,
+      "tag": "0001_uneven_banshee",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1727530666052,
+      "tag": "0002_serious_boomerang",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1727530758315,
+      "tag": "0003_slim_rogue",
+      "breakpoints": true
     }
   ]
 }
