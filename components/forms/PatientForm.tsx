@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { Form } from "@/components/ui/form";
-import { CustomFromField, FormFieldType } from "./CustomFromField";
+import { CustomFormField, FormFieldType } from "./CustomFormField";
 import { SubmitButton } from "./SubmitButton";
 import { otpFormSchema, signUpFormSchema } from "@/lib/validation";
 import { useRouter } from "next/navigation";
@@ -70,7 +70,7 @@ function OtpForm({ email }: { email: string }) {
           <p className="tesxt-dark-700">Enter your OTP sent to {email}</p>
         </section>
 
-        <CustomFromField
+        <CustomFormField
           control={otpForm.control}
           fieldType={FormFieldType.OTP}
           name="otp"
@@ -134,7 +134,7 @@ export function PatientRegisterForm({
           <h1 className="header">Hi there 👋</h1>
           <p className="tesxt-dark-700">Schedule your first appointment</p>
         </section>
-        <CustomFromField
+        <CustomFormField
           control={form.control}
           fieldType={FormFieldType.INPUT}
           name="name"
@@ -144,7 +144,7 @@ export function PatientRegisterForm({
           iconSrc="/assets/icons/user.svg"
           iconAlt="user"
         />
-        <CustomFromField
+        <CustomFormField
           control={form.control}
           fieldType={FormFieldType.INPUT}
           name="email"
@@ -154,7 +154,7 @@ export function PatientRegisterForm({
           iconSrc="/assets/icons/email.svg"
           iconAlt="Email"
         />
-        <CustomFromField
+        <CustomFormField
           control={form.control}
           fieldType={FormFieldType.PHONE_INPUT}
           name="phone"

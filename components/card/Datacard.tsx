@@ -14,7 +14,7 @@ export function DataCard({ iconSrc, iconAlt, data, description ,bgSource, bgAlt 
     return (
       <div
         className={
-          "flex-col min-w-[400px]    w-[400px] h-auto  rounded-2xl  justify-between  stat-card  gap-8  p-8" 
+          "flex-col min-w-[350px]  lg:min-w-[400px]    w-[400px] h-auto  rounded-2xl  justify-between  stat-card  gap-8  p-8" 
         }
         style={{ backgroundImage: `url(${bgSource})` }}
       >

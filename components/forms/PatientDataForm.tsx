@@ -5,18 +5,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useCallback, useState } from "react";
 import { Form } from "@/components/ui/form";
-import { CustomFromField } from "./CustomFromField";
 import { SubmitButton } from "./SubmitButton";
 import { PatientFormValidation } from "@/lib/validation";
 import { useRouter } from "next/navigation";
 import { registerPatient } from "@/lib/actions/patient.actions";
-import { FormFieldType } from "./CustomFromField";
 import {
   Doctors,
   GenderTypes,
   IdentificationTypes,
 } from "@/constants";
 import Image from "next/image";
+import { CustomFormField, FormFieldType } from "./CustomFormField";
 
 export function PatientDataForm({ userId, user }: { userId: string; user: any }) {
   const router = useRouter();
@@ -113,7 +112,7 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
         <section className="flex flex-col gap-2">
           <h2 className="font-bold text-lg">Personal Information</h2>
 
-          <CustomFromField
+          <CustomFormField
             control={form.control}
             fieldType={FormFieldType.INPUT}
             name="name"
@@ -123,7 +122,7 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
             iconAlt="user"
           />
           <div className="flex gap-2">
-            <CustomFromField
+            <CustomFormField
               control={form.control}
               fieldType={FormFieldType.INPUT}
               name="email"
@@ -132,7 +131,7 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
               iconSrc="/assets/icons/email.svg"
               iconAlt="email"
             />
-            <CustomFromField
+            <CustomFormField
               control={form.control}
               fieldType={FormFieldType.PHONE_INPUT}
               name="phone"
@@ -141,7 +140,7 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
             />
           </div>
           <div className="flex gap-2">
-            <CustomFromField
+            <CustomFormField
               control={form.control}
               fieldType={FormFieldType.DATE_PICKER}
               name="birthDate"
@@ -151,7 +150,7 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
               iconSrc="/assets/icons/calendar.svg"
               iconAlt="email"
             />
-            <CustomFromField
+            <CustomFormField
               control={form.control}
               fieldType={FormFieldType.RADIO}
               name="gender"
@@ -166,14 +165,14 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
             />
           </div>
           <div className="flex  gap-2">
-            <CustomFromField
+            <CustomFormField
               control={form.control}
               fieldType={FormFieldType.INPUT}
               name="address"
               label="Address"
               placeholder="ex: 213, Main St, GB Palya, Bengaluru"
             />
-            <CustomFromField
+            <CustomFormField
               control={form.control}
               fieldType={FormFieldType.INPUT}
               name="occupation"
@@ -182,14 +181,14 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
             />
           </div>
           <div className="flex  gap-2">
-            <CustomFromField
+            <CustomFormField
               control={form.control}
               fieldType={FormFieldType.INPUT}
               name="emergencyContactName"
               label="Emergency Contact Name"
               placeholder="Guardian's Name"
             />
-            <CustomFromField
+            <CustomFormField
               control={form.control}
               fieldType={FormFieldType.PHONE_INPUT}
               name="emergencyContactNumber"
@@ -204,7 +203,7 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
         <section className="flex flex-col gap-2">
           <h2 className="font-bold text-lg">Medical Information</h2>
 
-          <CustomFromField
+          <CustomFormField
             control={form.control}
             fieldType={FormFieldType.SELECT}
             name="primaryPhysician"
@@ -226,14 +225,14 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
             }))}
           />
           <div className="flex gap-2">
-            <CustomFromField
+            <CustomFormField
               control={form.control}
               fieldType={FormFieldType.INPUT}
               name="insuranceProvider"
               label="Insurance Provider"
               placeholder="Enter Insurance Provider"
             />
-            <CustomFromField
+            <CustomFormField
               control={form.control}
               fieldType={FormFieldType.INPUT}
               name="insurancePolicyNumber"
@@ -242,7 +241,7 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
             />
           </div>
           <div className="flex gap-2">
-            <CustomFromField
+            <CustomFormField
               control={form.control}
               fieldType={FormFieldType.TEXTAREA}
               name="allergies"
@@ -250,7 +249,7 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
               placeholder="Peanuts, Sulphur , Pollen"
             />
 
-            <CustomFromField
+            <CustomFormField
               control={form.control}
               fieldType={FormFieldType.TEXTAREA}
               name="currentMedication"
@@ -259,14 +258,14 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
             />
           </div>
           <div className="flex  gap-2">
-            <CustomFromField
+            <CustomFormField
               control={form.control}
               fieldType={FormFieldType.TEXTAREA}
               name="pastMedicalHistory"
               label="Past Medical History"
               placeholder="ex: Hypertension"
             />
-            <CustomFromField
+            <CustomFormField
               control={form.control}
               fieldType={FormFieldType.TEXTAREA}
               name="familyMedicalHistory"
@@ -279,7 +278,7 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
         <section className="flex flex-col gap-2">
           <h2 className="font-bold text-lg">Identification and Verification</h2>
 
-          <CustomFromField
+          <CustomFormField
             control={form.control}
             fieldType={FormFieldType.SELECT}
             name="identificationType"
@@ -288,7 +287,7 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
             options={IdentificationTypes}
             defaultValue="aadharCard"
           />
-          <CustomFromField
+          <CustomFormField
             control={form.control}
             fieldType={FormFieldType.INPUT}
             name="identificationNumber"
@@ -296,7 +295,7 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
             placeholder="ex : 1234567890"
           />
 
-          <CustomFromField
+          <CustomFormField
             control={form.control}
             fieldType={FormFieldType.FILE_INPUT}
             name="identificationDocument"
@@ -308,21 +307,21 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
         <section className="flex flex-col gap-2">
           <h2 className="font-bold text-lg">Consent and Privacy</h2>
 
-          <CustomFromField
+          <CustomFormField
             control={form.control}
             fieldType={FormFieldType.CHECKBOX}
             name="treatmentConsent"
             label="I consent to receive treatment for my health condition."
             placeholder="Select Identification type"
           />
-          <CustomFromField
+          <CustomFormField
             control={form.control}
             fieldType={FormFieldType.CHECKBOX}
             name="disclosureConsent"
             label="I consent to the use and disclosure of my health information for treatment purposes."
             placeholder="Select Identification type"
           />
-          <CustomFromField
+          <CustomFormField
             control={form.control}
             fieldType={FormFieldType.CHECKBOX}
             name="privacyConsent"

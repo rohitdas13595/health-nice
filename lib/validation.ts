@@ -133,3 +133,48 @@ export function getAppointmentSchema(type: string) {
       return ScheduleAppointmentSchema;
   }
 }
+
+export const addDoctorSchema = z.object({
+  name: z
+    .string()
+    .min(3, {
+      message: "Name must be at least 3 characters",
+    })
+    .max(50, {
+      message: "Name must be atmost 50 characters",
+    }),
+  email: z.string().email({
+    message: "Invalid email address",
+  }),
+  phone: z
+    .string()
+    .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
+
+  specialization: z
+    .string()
+    .min(3, {
+      message: "Specialization must be at least 3 characters",
+    })
+    .max(50, {
+      message: "Specialization must be atmost 50 characters",
+    }),
+
+  experience: z.string().refine((experience) => {
+    const number = Number(experience);
+    return !isNaN(number) && number >= 0 && number <= 100;
+  }),
+
+  fees: z.string().refine((fees) => {
+    const number = Number(fees);
+    return !isNaN(number) && number >= 0;
+  }),
+  address: z
+    .string()
+    .min(3, {
+      message: "Address must be at least 3 characters",
+    })
+    .max(250, {
+      message: "Address must be atmost 250 characters",
+    }),
+  avatar: z.string().optional(),
+});

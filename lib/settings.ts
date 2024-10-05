@@ -18,6 +18,14 @@ export  class Settings {
     redisUsername: string;
     resendApiKey: string;
 
+    apiKey: string;
+    authDomain: string;
+    projectId: string;
+    storageBucket: string;
+    messagingSenderId: string;
+    appId: string;
+
+
    constructor(){
 
        this.postgresUser = this.getValue("POSTGRES_USER", "postgres");
@@ -33,6 +41,14 @@ export  class Settings {
        this.redisUsername = this.getValue("REDIS_USERNAME", "");
 
        this.resendApiKey = this.getValue("RESEND_API_KEY", "");
+
+       this.apiKey = this.getValue("API_KEY", "");
+       this.authDomain = this.getValue("AUTH_DOMAIN", "");
+       this.projectId = this.getValue("PROJECT_ID", "");
+       this.storageBucket = this.getValue("STORAGE_BUCKET", "");
+       this.messagingSenderId = this.getValue("MESSAGING_SENDER_ID", "");
+       this.appId = this.getValue("APP_ID", "");
+
    }
 
 

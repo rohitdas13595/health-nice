@@ -5,6 +5,7 @@ import { PatientAppointments } from "@/components/tables/patient/PatientAppointm
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Patients } from "@/components/tables/patient/Patients";
 import { Provider } from "@/components/contexts/queryClient";
+import { DoctorList } from "@/components/tables/doctors/DoctorList";
 
 const DataCards: CardDataType[] = [
   {
@@ -57,7 +58,7 @@ export default function Page() {
           <h2 className="text-2xl font-bold ">Welcome, Rohit</h2>
           <p>Start creating your Appointments</p>
         </div>
-        <div className="flex wrap gap-8">
+        <div className="flex flex-wrap gap-8">
           {DataCards.map((card) => (
             <DataCard
               key={card.description}
@@ -90,7 +91,11 @@ export default function Page() {
           <TabsContent value="patient_profile">
             Change your password here.
           </TabsContent>
-          <TabsContent value="doctor">Change your password here.</TabsContent>
+          <TabsContent value="doctor">
+            <Provider>
+              <DoctorList />
+            </Provider>
+          </TabsContent>
         </Tabs>
       </div>
     </div>

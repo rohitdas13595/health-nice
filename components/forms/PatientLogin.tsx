@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { Form } from "@/components/ui/form";
-import { CustomFromField, FormFieldType } from "./CustomFromField";
+import { CustomFormField, FormFieldType } from "./CustomFormField";
 import { SubmitButton } from "./SubmitButton";
 import { loginFormSchema, otpFormSchema } from "@/lib/validation";
 import { useRouter } from "next/navigation";
@@ -55,7 +55,7 @@ function OtpForm({ phone }: { phone: string }) {
           <p className="tesxt-dark-700">Enter your OTP sent to {phone}</p>
         </section>
 
-        <CustomFromField
+        <CustomFormField
           control={otpForm.control}
           fieldType={FormFieldType.OTP}
           name="otp"
@@ -112,7 +112,7 @@ function PhoneForm({
           <p className="tesxt-dark-700">Enter your phone number</p>
         </section>
 
-        <CustomFromField
+        <CustomFormField
           control={phoneForm.control}
           fieldType={FormFieldType.PHONE_INPUT}
           name="phone"

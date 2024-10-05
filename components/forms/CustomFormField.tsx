@@ -28,6 +28,9 @@ import {
 } from "../ui/select";
 import { Checkbox } from "../ui/checkbox";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
+import { useState } from "react";
+import { type PutBlobResult } from '@vercel/blob';
+import { upload } from '@vercel/blob/client';
 
 export enum FormFieldType {
   INPUT = "input",
@@ -61,7 +64,7 @@ interface CustomProps {
   renderSkeleton?: (field: any) => React.ReactNode;
 }
 
-export function CustomFromField(props: CustomProps) {
+export function CustomFormField(props: CustomProps) {
   const { control, name, label, hint, fieldType } = props;
 
   return (
@@ -90,6 +93,7 @@ const RenderInput = ({
   field: ControllerRenderProps<any, string>;
   props: CustomProps;
 }) => {
+  const [blob, setBlob] = useState<PutBlobResult | null>(null);
   const {
     fieldType,
     iconSrc,
@@ -98,6 +102,7 @@ const RenderInput = ({
     options,
     defaultValue,
     label,
+    type
   } = props;
   switch (fieldType) {
     case FormFieldType.INPUT: {
@@ -116,6 +121,7 @@ const RenderInput = ({
           <FormControl>
             <Input
               placeholder={placeholder}
+              type={type ?? "text"}
               {...field}
               className="sha-input border-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-transparent focus:border-0"
             />
@@ -179,7 +185,7 @@ const RenderInput = ({
             <div className="flex items-center justify-center w-full">
               <label
                 htmlFor="dropzone-file"
-                className="flex flex-col items-center justify-center w-full h-32 rounded-md cursor-pointer  dark:hover:bg-dark-500 "
+                className="flex flex-col items-center justify-center w-full min-h-32 rounded-md cursor-pointer  dark:hover:bg-dark-500 "
               >
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   <svg
@@ -206,8 +212,29 @@ const RenderInput = ({
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     SVG, PNG, JPG or GIF (MAX. 800x400px)
                   </p>
+                  {
+                    blob && (
+                      <img src={blob.url} className="w-12 h-12" alt=""/>
+                    )
+                  }
                 </div>
-                <input id="dropzone-file" type="file" className="hidden" />
+                <input accept="image/png, image/jpeg,image/gif" id="dropzone-file" type="file" className="hidden" onChange={async (e)=>{
+                  const  file = e.target.files ? e.target.files[0] : null;
+                  if(file){
+                    console.log("file", file)
+                    const newBlob = await upload(file.name , file, {
+                      access: "public",
+                      handleUploadUrl:'/api/blob',
+                    
+                    
+                    });
+                    setBlob(newBlob);
+                    field.onChange(newBlob.url);
+                    alert('File uploaded successfully' + newBlob.url);
+                  }
+                }}
+                //  value={field.value}
+                />
               </label>
             </div>
           </FormControl>
