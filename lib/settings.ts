@@ -24,7 +24,7 @@ export  class Settings {
     storageBucket: string;
     messagingSenderId: string;
     appId: string;
-
+    jwtSecret: string;
 
    constructor(){
 
@@ -48,6 +48,9 @@ export  class Settings {
        this.storageBucket = this.getValue("STORAGE_BUCKET", "");
        this.messagingSenderId = this.getValue("MESSAGING_SENDER_ID", "");
        this.appId = this.getValue("APP_ID", "");
+
+
+       this.jwtSecret = this.getValue("JWT_SECRET", "");
 
    }
 

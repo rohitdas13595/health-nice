@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Button } from "../ui/button";
+import { useFormContext } from "react-hook-form";
 
 interface ButtonProps {
   isLoading: boolean;
@@ -14,6 +15,8 @@ export function SubmitButton({
   children,
   type,
 }: ButtonProps) {
+  const context  =  useFormContext();
+  console.log("context", context?.getValues());
   return (
     <Button
       type={type ?? "submit"}

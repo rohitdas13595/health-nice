@@ -8,11 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
+
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import { addDoctorSchema } from "@/lib/validation";

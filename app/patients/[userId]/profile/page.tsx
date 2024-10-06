@@ -1,3 +1,4 @@
+import { Provider } from "@/components/contexts/queryClient";
 import { PatientDataForm } from "@/components/forms/PatientDataForm";
 import { getUser } from "@/lib/actions/patient.actions";
 import Image from "next/image";
@@ -20,7 +21,9 @@ export default async function Register({
             height={1000}
             className="mb-12 h-10 w-fit"
           />
-          <PatientDataForm userId={userId} user={user} />
+          <Provider>
+            <PatientDataForm userId={userId} user={user} />
+          </Provider>
           <div className="text-14-regular mt-20 flex justify-between">
             <p className="justify-items-end text-dark-600  xl:text-left">
               &copy; 2024 Health Nice

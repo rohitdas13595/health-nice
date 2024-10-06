@@ -146,7 +146,7 @@ export const Appointments = schema.table("appointments", {
   patientId: uuid("patient_id")
     .notNull()
     .references(() => Patient.id),
-  PatientDataId: uuid("patient_data_id")
+  patientDataId: uuid("patient_data_id")
     .notNull()
     .references(() => PatientData.id),
   doctorId: uuid("doctor_id")

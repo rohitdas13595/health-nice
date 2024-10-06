@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Patients } from "@/components/tables/patient/Patients";
 import { Provider } from "@/components/contexts/queryClient";
 import { DoctorList } from "@/components/tables/doctors/DoctorList";
+import { MyProfiles } from "@/components/tables/patient/MyProfiles";
 
 const DataCards: CardDataType[] = [
   {
@@ -78,24 +79,20 @@ export default function Page() {
             <TabsTrigger value="patient_profile">Profiles</TabsTrigger>
             <TabsTrigger value="doctor">Doctor</TabsTrigger>
           </TabsList>
-          <TabsContent value="appointments">
-            <Provider>
+          <Provider>
+            <TabsContent value="appointments">
               <PatientAppointments />
-            </Provider>
-          </TabsContent>
-          <TabsContent value="patient">
-            <Provider>
+            </TabsContent>
+            <TabsContent value="patient">
               <Patients />
-            </Provider>
-          </TabsContent>
-          <TabsContent value="patient_profile">
-            Change your password here.
-          </TabsContent>
-          <TabsContent value="doctor">
-            <Provider>
+            </TabsContent>
+            <TabsContent value="patient_profile">
+              <MyProfiles />
+            </TabsContent>
+            <TabsContent value="doctor">
               <DoctorList />
-            </Provider>
-          </TabsContent>
+            </TabsContent>
+          </Provider>
         </Tabs>
       </div>
     </div>

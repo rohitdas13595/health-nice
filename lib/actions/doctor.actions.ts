@@ -1,5 +1,5 @@
 'use server';
-import { desc, ilike, or } from "drizzle-orm";
+import { and, count, desc, ilike, or } from "drizzle-orm";
 import { db } from "../db/connection";
 import { Doctor } from "../db/schema";
 
@@ -60,27 +60,29 @@ export const getDoctorList = async ({
       limit,
       offset,
       where: (Doctor, { eq, or }) => {
-        if (!query || query === "") {
-          return;
-        }
-        return or(
-          ilike(Doctor.name, `%${query}%`),
-          ilike(Doctor.email, `%${query}%`),
-          ilike(Doctor.phone, `%${query}%`)
-        );
+        return and(
+            !!query  ?  or(
+                ilike(Doctor.name, `%${query}%`),
+                ilike(Doctor.email, `%${query}%`),
+                ilike(Doctor.phone, `%${query}%`)
+              ): undefined
+        ) 
       },
       orderBy: [desc(Doctor.createdAt)],
+      
     });
   
     const Numbers = await db
-      .select({ count: Doctor.id })
+      .select({ count: count(Doctor.id) })
       .from(Doctor)
       .where(
-        or(
-          ilike(Doctor.name, `%${query}%`),
-          ilike(Doctor.email, `%${query}%`),
-          ilike(Doctor.phone, `%${query}%`)
-        )
+        and(
+            !!query  ?  or(
+                ilike(Doctor.name, `%${query}%`),
+                ilike(Doctor.email, `%${query}%`),
+                ilike(Doctor.phone, `%${query}%`)
+              ): undefined
+        ) 
       );
   
     if (
@@ -97,3 +99,12 @@ export const getDoctorList = async ({
     }
     return null;
   };
+
+
+  export const  getDoctorsWithoutPagination = async () => {
+    const doctorList = await db.query.Doctor.findMany();
+    if (doctorList) {
+      return doctorList;
+    }
+    return null;  
+  }

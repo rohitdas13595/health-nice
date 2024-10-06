@@ -1,17 +1,17 @@
 "use server";
-import { Day } from "react-day-picker";
-// import { AppwriteException, ID, Models, Query } from "node-appwrite";
-// import { databases, users } from "../appwrite.config";
 
 import { db } from "../db/connection";
 import { Patient, PatientData, PatientSession } from "../db/schema";
-import { asc, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { asc, count, desc, eq, ilike, or, sql } from "drizzle-orm";
 import dayjs from "dayjs";
 import { bigint } from "drizzle-orm/mysql-core";
 import { getData, setData } from "../redis/redis";
 import { resendService } from "../resend/resend";
 import { EmailTemplate } from "../resend/template";
 import { console } from "inspector";
+import { isTokenExpired, signToken, verifyToken } from "../jwt";
+import { cookies } from "next/headers";
+import { access } from "fs";
 
 export const generateOtp = async () => {
   const otp = Math.floor(100000 + Math.random() * 900000);
@@ -85,9 +85,14 @@ export const getUser = async (userId: string) => {
   }
 };
 
-export const registerPatient = async (patient: any) => {
+export const registerPatient = async (
+  patient: typeof PatientData.$inferInsert
+) => {
+  console.log("patient", patient);
   try {
     const result = await db.insert(PatientData).values(patient).returning();
+
+    console.log("result", result);
     return result[0];
   } catch (error) {
     console.error("error creating patient", error);
@@ -102,7 +107,7 @@ export const createpatientSession = async (patientId: string) => {
       .from(PatientSession)
       .where(eq(PatientSession.patientId, patientId));
     const newIdeleExpires = dayjs().add(30, "day").toDate().getTime();
-    const newActiveExpires = dayjs().add(30, "minute").toDate().getTime();
+    const newActiveExpires = dayjs().add(60, "minute").toDate().getTime();
 
     if (exists.length > 0 && exists[0]) {
       const query = sql`UPDATE health_nice.patient_session SET active_expires = ${newActiveExpires}, idle_expires = ${newIdeleExpires} WHERE patient_id = ${patientId}`;
@@ -118,6 +123,12 @@ export const createpatientSession = async (patientId: string) => {
         .from(PatientSession)
         .where(eq(PatientSession.patientId, patientId));
       if (session.length > 0 && session[0]) {
+        console.log("session.....................................", session[0]);
+        const setCookie = await setPatientCookies(session[0]);
+        if (!setCookie) {
+          return null;
+        }
+
         return session[0];
       }
       return null;
@@ -131,6 +142,10 @@ export const createpatientSession = async (patientId: string) => {
         })
         .returning();
       if (result.length > 0 && result[0]) {
+        const setCookie = await setPatientCookies(result[0]);
+        if (!setCookie) {
+          return null;
+        }
         return result[0];
       }
       return null;
@@ -142,6 +157,8 @@ export const createpatientSession = async (patientId: string) => {
 };
 
 export const verifyOtp = async (otp: string, email: string) => {
+  console.log("otp", otp, "email", email);
+
   try {
     const result = await db
       .select()
@@ -150,6 +167,7 @@ export const verifyOtp = async (otp: string, email: string) => {
     if (result.length > 0) {
       const patient = result[0];
       const redisOtp = await getData(`health-nice:${email}`);
+      console.log("redisOtp", redisOtp);
       if (!redisOtp) {
         return null;
       }
@@ -165,7 +183,63 @@ export const verifyOtp = async (otp: string, email: string) => {
   }
 };
 
+export const setPatientCookies = async (
+  session: typeof PatientSession.$inferSelect
+) => {
+  try {
+    console.log("session.....................................", session);
+    const pa = await signToken(
+      {
+        sessionId: session.id,
+        patientId: session.patientId,
+      },
+      "1h"
+    );
+
+    const pr = await signToken(
+      {
+        sessionId: session.id,
+        patientId: session.patientId,
+        role: "patient",
+      },
+      "30d"
+    );
+
+    if (pa && pr) {
+      cookies().set("pa", pa, { path: "/", maxAge: 60 * 60 });
+      cookies().set("pr", pr, { path: "/", maxAge: 60 * 60 * 24 * 30 });
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    // throw error;
+    console.error("error setting patient cookies", error);
+    return false;
+  }
+};
+
 export const getSession = async (patientId: string) => {
+  // const newIdeleExpires = dayjs().add(30, "day").toDate().getTime();
+    const newActiveExpires = dayjs().add(60, "minute").toDate().getTime();
+  const cookiesSession = cookies();
+  const pa = cookiesSession.get("pa");
+  const pr = cookiesSession.get("pr");
+  if (!pa || !pr) {
+    return null;
+  }
+
+  const accessToken: any = await verifyToken(pa.value);
+  const refreshToken: any = await verifyToken(pr.value);
+
+  if (!accessToken) {
+    if (!refreshToken) {
+      return null;
+    } else if (refreshToken.patientId !== patientId) {
+      return null;
+    }
+  }
+
   const session = await db
     .select()
     .from(PatientSession)
@@ -176,30 +250,28 @@ export const getSession = async (patientId: string) => {
       if (current_session.activeExpires > Date.now()) {
         return current_session;
       } else {
-        const update = await db
-          .update(PatientSession)
-          .set({ activeExpires: dayjs().add(30, "minute").toDate().getTime() })
-          .where(eq(PatientSession.patientId, patientId))
-          .returning();
-        if (update.length > 0 && update[0]) {
-          return update[0];
+        const query = sql`UPDATE health_nice.patient_session SET active_expires = ${newActiveExpires} WHERE patient_id = ${patientId}`;
+
+        const result = await db.execute(query);
+
+        if (!result.rowCount || result.rowCount === 0) {
+          return null;
         }
-        return null;
+        const session = await db
+          .select()
+          .from(PatientSession)
+          .where(eq(PatientSession.patientId, patientId));
+        if (session.length > 0 && session[0]) {
+          const setCookie = await setPatientCookies(result[0]);
+          if (!setCookie) {
+            return null;
+          }
+          return session[0];
+        }
       }
     } else {
       return null;
     }
-  }
-  return null;
-};
-
-export const getPatientData = async (patientId: string) => {
-  const patientData = await db
-    .select()
-    .from(PatientData)
-    .where(eq(PatientData.patientId, patientId));
-  if (patientData.length > 0 && patientData[0]) {
-    return patientData[0];
   }
   return null;
 };
@@ -231,7 +303,7 @@ export const getPatientList = async ({
   });
 
   const Numbers = await db
-    .select({ count: Patient.id })
+    .select({ count: count(Patient.id) })
     .from(Patient)
     .where(
       or(

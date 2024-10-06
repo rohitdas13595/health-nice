@@ -9,19 +9,24 @@ import { SubmitButton } from "./SubmitButton";
 import { PatientFormValidation } from "@/lib/validation";
 import { useRouter } from "next/navigation";
 import { registerPatient } from "@/lib/actions/patient.actions";
-import {
-  Doctors,
-  GenderTypes,
-  IdentificationTypes,
-} from "@/constants";
+import { GenderTypes, IdentificationTypes } from "@/constants";
 import Image from "next/image";
 import { CustomFormField, FormFieldType } from "./CustomFormField";
+import { getDoctorsWithoutPagination } from "@/lib/actions/doctor.actions";
+import { useQuery } from "@tanstack/react-query";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { getInitials } from "@/lib/utils";
 
-export function PatientDataForm({ userId, user }: { userId: string; user: any }) {
+export function PatientDataForm({
+  userId,
+  user,
+}: {
+  userId: string;
+  user: any;
+}) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  
   const form = useForm<z.infer<typeof PatientFormValidation>>({
     resolver: zodResolver(PatientFormValidation),
     defaultValues: {
@@ -45,7 +50,7 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
       identificationNumber: "",
       identificationDocument: [],
       treatmentConsent: false,
-      disclosureConsent: false, 
+      disclosureConsent: false,
       privacyConsent: false,
     },
   });
@@ -53,22 +58,20 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
   const onSubmit = useCallback(
     async (values: z.infer<typeof PatientFormValidation>) => {
       setIsLoading(true);
-
+      console.log("values", values);
       try {
-        
-        
-
         const result = await registerPatient({
+          primaryPhysicianId: values.primaryPhysician,
+          patientId: userId,
           name: values.name,
           email: values.email,
           phone: values.phone,
-          birthDate: values.birthDate,
-          gender: values.gender,
+          birthDate: values.birthDate.toISOString(),
+          gender: values.gender as 'male' | 'female' | 'other',
           address: values.address,
           occupation: values.occupation,
           emergencyContactName: values.emergencyContactName,
           emergencyContactNumber: values.emergencyContactNumber,
-          primaryPhysician: values.primaryPhysician,
           insuranceProvider: values.insuranceProvider,
           insurancePolicyNumber: values.insurancePolicyNumber,
           allergies: values.allergies,
@@ -77,15 +80,14 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
           pastMedicalHistory: values.pastMedicalHistory,
           identificationType: values.identificationType,
           identificationNumber: values.identificationNumber,
-         
+
           privacyConsent: values.privacyConsent,
-          userId: userId,
-          identificationDocument: '',
+          identificationDocument: values.identificationDocument,
         });
         console.log("values 1", result);
         if (result) {
           console.log("result", result);
-          // router.push(`/patients/${result.$id}/register`);
+          router.push(`/patients/${result.patientId}/dashboard`);
         }
       } catch (error) {
         console.error("error", error);
@@ -96,6 +98,12 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
     []
   );
 
+  const { data: doctors } = useQuery({
+    queryKey: ["doctors"],
+    queryFn: async () => await getDoctorsWithoutPagination(),
+    enabled: true,
+    staleTime: 1000,
+  });
 
   if (!user) {
     return null;
@@ -209,20 +217,30 @@ export function PatientDataForm({ userId, user }: { userId: string; user: any })
             name="primaryPhysician"
             label="primaryPhysician"
             placeholder="Select Your Doctor"
-            options={Doctors.map((doctor) => ({
-              value: doctor.name,
-              label: (
-                <div className="flex gap-2">
-                  <Image
-                    src={doctor.image}
-                    alt={doctor.name}
-                    width={20}
-                    height={20}
-                  />
-                  <span className="ml-2">{doctor.name}</span>
-                </div>
-              ),
-            }))}
+            options={
+              doctors
+                ? doctors?.map((doctor) => ({
+                    value: doctor.id,
+                    label: (
+                      <div className="flex gap-2 items-center">
+                        <Avatar className="w-6 h-6">
+                          <AvatarImage
+                            src={
+                              doctor?.avatar ??
+                              "https://github.com/shadcn.png"
+                            }
+                          />
+                          <AvatarFallback>
+                            {getInitials(doctor?.name )}
+                          </AvatarFallback>
+                        </Avatar>
+
+                        <p>{doctor?.name}</p>
+                      </div>
+                    ),
+                  }))
+                : []
+            }
           />
           <div className="flex gap-2">
             <CustomFormField

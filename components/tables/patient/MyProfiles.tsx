@@ -8,48 +8,31 @@ import { ColumnDef, PaginationState } from "@tanstack/react-table";
 import { useState } from "react";
 import { DataTable } from "../DataTable";
 import { Input } from "@/components/ui/input";
-import AddDoctorForm from "@/components/forms/AddDoctor";
 import { useQuery } from "@tanstack/react-query";
-import { getDoctorList } from "@/lib/actions/doctor.actions";
-import dayjs from "dayjs";
+import { getProfileList } from "@/lib/actions/patient.profile.actions";
 import { getInitials } from "@/lib/utils";
+import { Plus } from "lucide-react";
+import { da } from "date-fns/locale";
+import AddAppintment from "@/components/forms/AddAppointment";
 
-
-
-export const DoctorList = () => {
+export const MyProfiles = ({ userId }: { userId?: string }) => {
   const [pagination, setpagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
-
   const [query, setQuery] = useState<string | undefined>();
 
   const columns: ColumnDef<any | undefined>[] = [
     {
-      accessorKey: "id",
-      header: "Doctor",
+      accessorKey: "patientId",
+      header: "Patient",
       cell: ({ row }) => (
         <div className="flex gap-2 items-center">
-          <Avatar>
-            <AvatarImage
-              src={row.original?.avatar ?? "https://github.com/shadcn.png"}
-            />
-            <AvatarFallback>{getInitials(row.original?.name)}</AvatarFallback>
-          </Avatar>
-
           <p>{row.original?.name}</p>
         </div>
       ),
     },
-    {
-      accessorKey: "createdAt",
-      header: "Date",
 
-      cell: ({ row }) => {
-        return <>{dayjs(row.original?.createdAt).format("MMM DD, YYYY, hh:mm A")}</>
-      },
-
-    },
     {
       accessorKey: "email",
       header: "Email",
@@ -58,42 +41,59 @@ export const DoctorList = () => {
       accessorKey: "phone",
       header: "Phone",
     },
+    {
+      accessorKey: "select",
+      header: "Actions",
+
+      cell: ({ row }) => (
+        <AddAppintment patientProfileId={row.original?.id} patientId={row.original?.patientId}   />
+      ),
+    },
   ];
 
-  const { data: doctors, isLoading: isLoading, refetch } = useQuery({
-    queryKey: ["doctors", pagination.pageIndex, pagination.pageSize, query],
+  const {
+    data: profiles,
+    isLoading: isLoadingProfiles,
+    refetch,
+  } = useQuery({
+    queryKey: [
+      "patientProfiles",
+      pagination.pageIndex,
+      pagination.pageSize,
+      query,
+    ],
     queryFn: async () =>
-      await getDoctorList({
+      await getProfileList({
         limit: pagination.pageSize,
         offset: pagination.pageIndex * pagination.pageSize,
         query,
+        patientId: userId,
       }),
     enabled: true,
     staleTime: 1000,
   });
 
-  console.log("doctors", doctors);
+  console.log("profiles", profiles);
 
   return (
     <>
       <div className="flex w-full  justify-end gap-4 my-4">
         <div>
-          <Input
-            placeholder="Search Doctor"
-            onChange={(e) => setQuery(e.target.value)}
-          />
+          <Input placeholder="Search Profiles" value={query}  onChange={(e) => setQuery(e.target.value)}/>
         </div>
-        <div>
-          <AddDoctorForm  refetch={refetch}/>
-        </div>
+        <Link href={`/patients/${userId}/dashboard`}>
+          <Button className="shad-primary-btn  flex gap-1">
+            <Plus className="w-4 h-4 " />
+            Add Profile
+            </Button>
+        </Link>
       </div>
       <DataTable
         columns={columns}
-        data={doctors?.data || []}
+        data={profiles?.data ? profiles.data : []}
         pagination={pagination}
         setPagination={setpagination}
-        rowCount={doctors?.total ?? 0}
-
+        rowCount={profiles?.total ?? 0}
       />
     </>
   );

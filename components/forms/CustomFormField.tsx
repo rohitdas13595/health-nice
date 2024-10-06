@@ -29,8 +29,9 @@ import {
 import { Checkbox } from "../ui/checkbox";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 import { useState } from "react";
-import { type PutBlobResult } from '@vercel/blob';
-import { upload } from '@vercel/blob/client';
+import { type PutBlobResult } from "@vercel/blob";
+import { upload } from "@vercel/blob/client";
+import { TimePicker12Hours } from "../ui/datetime-picker";
 
 export enum FormFieldType {
   INPUT = "input",
@@ -40,9 +41,10 @@ export enum FormFieldType {
   DATE_PICKER = "datePicker",
   SELECT = "select",
   SKELETON = "skeleton",
-  RADIO="radio",
-  FILE_INPUT="fileInput",
-  OTP="otp"
+  RADIO = "radio",
+  FILE_INPUT = "fileInput",
+  OTP = "otp",
+  DATE_TIME_PICKER = "dateTimePicker",
 }
 
 interface CustomProps {
@@ -102,7 +104,7 @@ const RenderInput = ({
     options,
     defaultValue,
     label,
-    type
+    type,
   } = props;
   switch (fieldType) {
     case FormFieldType.INPUT: {
@@ -212,28 +214,27 @@ const RenderInput = ({
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     SVG, PNG, JPG or GIF (MAX. 800x400px)
                   </p>
-                  {
-                    blob && (
-                      <img src={blob.url} className="w-12 h-12" alt=""/>
-                    )
-                  }
+                  {blob && <img src={blob.url} className="w-12 h-12" alt="" />}
                 </div>
-                <input accept="image/png, image/jpeg,image/gif" id="dropzone-file" type="file" className="hidden" onChange={async (e)=>{
-                  const  file = e.target.files ? e.target.files[0] : null;
-                  if(file){
-                    console.log("file", file)
-                    const newBlob = await upload(file.name , file, {
-                      access: "public",
-                      handleUploadUrl:'/api/blob',
-                    
-                    
-                    });
-                    setBlob(newBlob);
-                    field.onChange(newBlob.url);
-                    alert('File uploaded successfully' + newBlob.url);
-                  }
-                }}
-                //  value={field.value}
+                <input
+                  accept="image/png, image/jpeg,image/gif"
+                  id="dropzone-file"
+                  type="file"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files ? e.target.files[0] : null;
+                    if (file) {
+                      console.log("file", file);
+                      const newBlob = await upload(file.name, file, {
+                        access: "public",
+                        handleUploadUrl: "/api/blob",
+                      });
+                      setBlob(newBlob);
+                      field.onChange(newBlob.url);
+                      alert("File uploaded successfully" + newBlob.url);
+                    }
+                  }}
+                  //  value={field.value}
                 />
               </label>
             </div>
@@ -381,7 +382,49 @@ const RenderInput = ({
                 selected={field.value}
                 onSelect={field.onChange}
                 initialFocus
+                captionLayout="dropdown"
               />
+            </PopoverContent>
+          </Popover>
+        </FormControl>
+      );
+    }
+
+    case FormFieldType.DATE_TIME_PICKER: {
+      return (
+        <FormControl>
+          <Popover>
+            <PopoverTrigger asChild>
+              <div className="flex py-2 rounded-md  border  border-dark-500  bg-dark-400 gap-2">
+                {iconSrc && (
+                  <Image
+                    src={iconSrc}
+                    alt={iconAlt ?? "icon"}
+                    className="ml-2"
+                    width={24}
+                    height={24}
+                  />
+                )}
+                {field.value ? (
+                  format(field.value, "PPP hh:mm a")
+                ) : (
+                  <span className="text-gray-400">Pick a date</span>
+                )}
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={field.value}
+                onSelect={field.onChange}
+                // initialFocus
+              />
+              <div className="p-3 border-t border-border">
+                <TimePicker12Hours
+                  setDate={field.onChange}
+                  date={field.value}
+                />
+              </div>
             </PopoverContent>
           </Popover>
         </FormControl>
@@ -392,25 +435,25 @@ const RenderInput = ({
       return (
         <FormControl>
           <InputOTP maxLength={6} onChange={field.onChange} value={field.value}>
-                <InputOTPGroup >
-                  <InputOTPSlot index={0}  />
-                </InputOTPGroup>
-                <InputOTPGroup>
-                  <InputOTPSlot index={1} />
-                </InputOTPGroup>
-                <InputOTPGroup>
-                  <InputOTPSlot index={2} />
-                </InputOTPGroup>
-                <InputOTPGroup>
-                  <InputOTPSlot index={3} />
-                </InputOTPGroup>
-                <InputOTPGroup>
-                  <InputOTPSlot index={4} />
-                </InputOTPGroup>
-                <InputOTPGroup>
-                  <InputOTPSlot index={5} />
-                </InputOTPGroup>
-              </InputOTP>
+            <InputOTPGroup>
+              <InputOTPSlot index={0} />
+            </InputOTPGroup>
+            <InputOTPGroup>
+              <InputOTPSlot index={1} />
+            </InputOTPGroup>
+            <InputOTPGroup>
+              <InputOTPSlot index={2} />
+            </InputOTPGroup>
+            <InputOTPGroup>
+              <InputOTPSlot index={3} />
+            </InputOTPGroup>
+            <InputOTPGroup>
+              <InputOTPSlot index={4} />
+            </InputOTPGroup>
+            <InputOTPGroup>
+              <InputOTPSlot index={5} />
+            </InputOTPGroup>
+          </InputOTP>
         </FormControl>
       );
     }

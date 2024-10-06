@@ -3,6 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CardDataType, DataCard } from "@/components/card/Datacard";
 import { PatientAppointments } from "@/components/tables/patient/PatientAppointments";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Provider } from "@/components/contexts/queryClient";
+import { MyProfiles } from "@/components/tables/patient/MyProfiles";
 
 const DataCards: CardDataType[] = [
   {
@@ -31,7 +33,7 @@ const DataCards: CardDataType[] = [
   },
 ];
 
-export default function Page() {
+export default function Page({ params: { userId } }) {
   return (
     <div className="flex flex-col h-screen max-h-screen w-full p-4">
       <div className="flex  w-full p-4  rounded-2xl h-20 justify-between bg-dark-200 items-center">
@@ -74,9 +76,15 @@ export default function Page() {
             <TabsTrigger value="profile">Profiles</TabsTrigger>
           </TabsList>
           <TabsContent value="appointments">
-            <PatientAppointments />
+            <Provider >
+              <PatientAppointments userId={userId} />
+            </Provider>
           </TabsContent>
-          <TabsContent value="profile">Change your password here.</TabsContent>
+          <TabsContent value="profile">
+            <Provider >
+             <MyProfiles userId={userId} />
+            </Provider>
+          </TabsContent>
         </Tabs>
       </div>
     </div>

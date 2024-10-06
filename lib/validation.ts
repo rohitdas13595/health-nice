@@ -1,5 +1,6 @@
 import { GenderTypes } from "@/constants";
 import { z } from "zod";
+import { PatientData } from "./db/schema";
 
 export const signUpFormSchema = z.object({
   name: z
@@ -178,3 +179,25 @@ export const addDoctorSchema = z.object({
     }),
   avatar: z.string().optional(),
 });
+
+
+export const createAppointmentSchema = z.object({
+  patientId: z
+    .string().uuid( 
+      "Invalid patient "
+    ),
+  patientDataId: z
+    .string().uuid(
+      "Invalid patient profile"
+    ),
+  doctorId: z
+    .string().uuid(
+      "Invalid doctor "
+    ),
+  time: z
+    .date(
+      
+    )
+   
+}); 
+
