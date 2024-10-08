@@ -221,18 +221,19 @@ export const setPatientCookies = async (
 
 export const getSession = async (patientId: string) => {
   // const newIdeleExpires = dayjs().add(30, "day").toDate().getTime();
-    const newActiveExpires = dayjs().add(60, "minute").toDate().getTime();
+  const newActiveExpires = dayjs().add(60, "minute").toDate().getTime();
   const cookiesSession = cookies();
   const pa = cookiesSession.get("pa");
   const pr = cookiesSession.get("pr");
-  if (!pa || !pr) {
+  if ( !pr) {
     return null;
   }
 
-  const accessToken: any = await verifyToken(pa.value);
+  
+
   const refreshToken: any = await verifyToken(pr.value);
 
-  if (!accessToken) {
+  if (!pa) {
     if (!refreshToken) {
       return null;
     } else if (refreshToken.patientId !== patientId) {
@@ -326,4 +327,18 @@ export const getPatientList = async ({
     };
   }
   return null;
+};
+
+export const readPatientIdFromCookie = async () => {
+  const cookiesSession = cookies();
+  const pr = cookiesSession.get("pr");
+  if (!pr) {
+    return null;
+  }
+  const accessToken: any = await verifyToken(pr?.value);
+  if (!accessToken) {
+    return null;
+  }
+  const patientId = accessToken.patientId;
+  return patientId;
 };

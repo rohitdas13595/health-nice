@@ -1,5 +1,5 @@
 "use server";
-import { and, desc, eq, gte, ilike, lte , count} from "drizzle-orm";
+import { and, desc, eq, gte, ilike, lte, count } from "drizzle-orm";
 import { db } from "../db/connection";
 import { Appointments } from "../db/schema";
 
@@ -25,14 +25,14 @@ export const getAppointmentList = async ({
   timeTo,
   patientId,
   status,
-  doctorId
+  doctorId,
 }: {
   limit: number;
   offset: number;
   timeFrom?: Date;
   timeTo?: Date;
   patientId?: string;
-  status?: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  status?: "pending" | "confirmed" | "completed" | "cancelled";
   doctorId?: string;
 }) => {
   const profileList = await db.query.Appointments.findMany({
@@ -51,7 +51,7 @@ export const getAppointmentList = async ({
   });
 
   const Numbers = await db
-    .select({ count : count(Appointments.id) })
+    .select({ count: count(Appointments.id) })
     .from(Appointments)
     .where(
       and(
@@ -76,4 +76,28 @@ export const getAppointmentList = async ({
     };
   }
   return null;
+};
+
+export const totalNumberOfAppointments = async ({
+  patientId,
+  status,
+}: {
+  patientId?: string;
+  status?: "pending" | "confirmed" | "completed" | "cancelled";
+}): Promise<number> => {
+  const numbers = await db
+    .select({ count: count(Appointments.id) })
+    .from(Appointments)
+    .where(
+      and(
+        patientId ? eq(Appointments.patientId, patientId) : undefined,
+        status ? eq(Appointments.status, status) : undefined
+      )
+    );
+
+  if (numbers && numbers[0] && numbers[0].count) {
+    return numbers[0].count;
+  }
+
+  return 0;
 };

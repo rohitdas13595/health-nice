@@ -1,9 +1,33 @@
 import AdminOtpModal from "@/components/forms/AdminOtp";
 import { PatientForm } from "@/components/forms/PatientForm";
-import Image from "next/image";
+import { getSession, readPatientIdFromCookie } from "@/lib/actions/patient.actions";
+import Image from "next/image"; 
+import  {redirect} from  'next/navigation'
+
+
+
+
 
 
 export default async function Home() {
+
+  const  data  =  await readPatientIdFromCookie();
+
+  
+
+  if(data){
+
+    const  session  =  await getSession(data);
+
+   
+
+    if(session) {
+      console.log("session", session , data)
+      redirect(`/patients/${data}/dashboard`);
+    }
+    
+  }
+
   return (
     <div className="flex  h-screen max-h-screen w-full">
       <section className="remove-scrollbar container my-auto">
